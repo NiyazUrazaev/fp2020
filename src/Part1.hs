@@ -15,7 +15,7 @@ module Part1
 --
 -- На вход функции подаются неотрицательные числа
 prob1 :: Int -> Int
-prob1 x = error "Implement me!"
+prob1 num = (3 * num + 123) `mod` 65537
 
 
 ------------------------------------------------------------
@@ -25,8 +25,7 @@ prob1 x = error "Implement me!"
 -- * нечётные числа увеличивает втрое и добавляет единицу
 -- * чётные числа делит на два
 prob2 :: Integer -> Integer
-prob2 n = error "Implement me!"
-
+prob2 n = if even n then div n 2 else n * 3 + 1
 
 ------------------------------------------------------------
 -- PROBLEM #3
@@ -50,8 +49,11 @@ prob2 n = error "Implement me!"
 --
 -- Для любой функции step и n == 1 ответом будет 0.
 prob3 :: (Integer -> Integer) -> Integer -> Integer
-prob3 step n = error "Implement me!"
-
+prob3 step n = recursive n 0
+    where
+        recursive :: Integer -> Integer -> Integer
+        recursive 1 i = i
+        recursive n i = recursive (step n) (i+1)
 
 ------------------------------------------------------------
 -- PROBLEM #4
@@ -68,8 +70,16 @@ prob3 step n = error "Implement me!"
 --
 -- Число n по модулю не превосходит 10^5
 prob4 :: Integer -> Integer
-prob4 n = error "Implement me!"
-
+prob4 n = fib 1 1 n
+    where
+        fib :: Integer -> Integer -> Integer -> Integer
+        fib a b count
+            | count == 0 && n >= 0 = a
+            | count == 0 && n < 0 = b
+            | otherwise = fib b c d
+                where
+                c = if n >= 0 then a + b else a - b
+                d = if n > 0 then count - 1 else count + 1
 
 ------------------------------------------------------------
 -- PROBLEM #5
@@ -80,4 +90,14 @@ prob4 n = error "Implement me!"
 -- Числа n и k положительны и не превосходят 10^8.
 -- Число 1 не считается простым числом
 prob5 :: Integer -> Integer -> Bool
-prob5 = error "Implement me!"
+prob5 n k = all (< k) (primeDivisors n)
+    where
+        primeDivisors :: Integer -> [Integer]
+        primeDivisors = divisorsWithCurrent 2
+
+        divisorsWithCurrent :: Integer -> Integer -> [Integer]
+        divisorsWithCurrent _ 1 = []
+        divisorsWithCurrent divisor number
+            | divisor * divisor > number = [number]
+            | number `mod` divisor == 0 = divisor : divisorsWithCurrent divisor (number `div` divisor)
+            | otherwise = divisorsWithCurrent (divisor + 1) number
