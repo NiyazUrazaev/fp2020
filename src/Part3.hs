@@ -205,7 +205,28 @@ prob29 kLength = maximum [(x * y) |
 -- Найти наименьшее треугольное число, у которого не меньше
 -- заданного количества делителей
 prob30 :: Int -> Integer
-prob30 = error "Implement me!"
+
+sqrt' :: Integral a => a -> a
+sqrt' x = round (sqrt (fromIntegral x))
+
+divisors :: Integer -> [Integer]
+divisors n = halfDivisors ++ allDivisors n halfDivisors []
+  where
+    halfDivisors = filter isDivisor [1..(sqrt' n)]
+    isDivisor candidate = n `mod` candidate == 0
+
+allDivisors :: Integer -> [Integer] -> [Integer] -> [Integer]
+allDivisors n [] acc = acc
+allDivisors n (x:xs) acc =
+  let a = (n `div` x)
+  in if a == x
+    then allDivisors n xs acc
+    else allDivisors n xs (a : acc)
+
+prob30 k = head (filter (\t -> length (divisors t) >= k) triangleNumbers)
+
+triangleNumbers :: [Integer]
+triangleNumbers = map (\n -> n * (n + 1) `div` 2) [0..]
 
 ------------------------------------------------------------
 -- PROBLEM #31
