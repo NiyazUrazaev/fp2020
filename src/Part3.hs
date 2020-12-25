@@ -234,7 +234,23 @@ triangleNumbers = map (\n -> n * (n + 1) `div` 2) [0..]
 -- Найти сумму всех пар различных дружественных чисел,
 -- меньших заданного N (1 <= N <= 10000)
 prob31 :: Int -> Int
-prob31 n = sum [x + y |x <- [1 .. n],y <- [x+1 .. n], prob26 (toInteger x) (toInteger y)]
+prob31 maxValue = sum $ map (\(left, right) -> left + right) pairs
+    where
+        pairs :: [(Int, Int)]
+        pairs = concat $ map getPair [1 .. pred maxValue]
+        getPair :: Int -> [(Int, Int)]
+        getPair leftNumber =
+            let numberValue = divisorsSum leftNumber
+            in bool
+               []
+               [(leftNumber, numberValue)]
+               (
+                   leftNumber < numberValue
+                   && leftNumber == divisorsSum numberValue
+                   && numberValue < maxValue
+               )
+        divisorsSum :: Int -> Int
+        divisorsSum = sum . getUnorderedDivisors
 
 ------------------------------------------------------------
 -- PROBLEM #32
